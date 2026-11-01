@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from datetime import datetime, UTC
-from sqlmodel import select
+from sqlmodel import select, or_
 from sqlalchemy.orm import selectinload
 
 from ...database.session import async_session
@@ -20,7 +20,12 @@ async def cleanup_expired_files():
             now = datetime.now(UTC)
             statement = (
                 select(Share)
-                .where(Share.expiry_at < now)
+                .where(
+                    or_(
+                    Share.expiry_at < now,
+                    Share.download_count == Share.download_limit
+                    )
+                )
                 .options(selectinload(Share.files))
             )
             result = await session.exec(statement)

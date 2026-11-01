@@ -15,7 +15,7 @@ from ..core.config import get_settings
 from ..database.models import Share, File
 from .storage import LocalStorage
 from ..core.utils.logic import generate_code, make_stored_filename, check_mime_type, QR_code_generator
-from ..core.utils.redis_session import create_session_token, get_session_data, try_mark_counted
+from ..core.utils.redis_session import create_session_token, get_session_data, try_mark_counted, is_counted
 from ..core.security import hashed_password, verify_password
 
 
@@ -179,11 +179,6 @@ class ShareService:
                 detail= "File not found"
                 )
         
-        if share.download_count>=share.download_limit:
-            raise HTTPException(
-                status_code=status.HTTP_410_GONE,
-                detail= "You have reached Download limit",
-                )
 
         #fetch File data
         file_record = await self.session.get(File, file_id)
@@ -214,6 +209,13 @@ class ShareService:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Session does not belong to this share",
             )
+
+        already_counted = await is_counted(X_session_token)
+        if not already_counted and share.download_count>=share.download_limit:
+            raise HTTPException(
+                status_code=status.HTTP_410_GONE,
+                detail= "You have reached Download limit",
+                )
 
         # Check file in storage
         if not await self.storage.file_exists(file_record.stored_filename):

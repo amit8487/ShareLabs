@@ -24,3 +24,6 @@ async def get_session_data(token: str)->dict|None:
 async def try_mark_counted(token:str)->bool:
     result = await rc.set(f"counted:{token}", 1, nx=True, ex=SESSION_TTL)
     return result is True
+
+async def is_counted(token: str)->bool:
+    return bool(await rc.exists(f"counted:{token}"))

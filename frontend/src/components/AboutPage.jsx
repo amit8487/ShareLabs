@@ -272,8 +272,8 @@ export default function AboutPage({ theme, onOpenModal, onGoHome }) {
               </div>
               <h3>The moment of exposure</h3>
               <p>
-                A friend once had to log into her personal WhatsApp on a shared college smartboard
-                just to download a course presentation file. The moment she logged in, weeks of private messages,
+                A friend once had to log into his personal WhatsApp on a shared college smartboard
+                just to download a course presentation file. The moment he logged in, weeks of private messages,
                 personal notifications, and photos were instantly projected in front of the entire lecture hall.
               </p>
               <p className="story-quote">

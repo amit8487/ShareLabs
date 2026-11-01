@@ -61,8 +61,11 @@ export default function Hero3DScene({ theme = 'light' }) {
 
     // Scene Setup
     const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100)
-    camera.position.set(0, 0, 7.5)
+    const initWidth = container.clientWidth || 360
+    const initHeight = container.clientHeight || 360
+    const camera = new THREE.PerspectiveCamera(45, initWidth / initHeight, 0.1, 100)
+    const getTargetZ = (w) => (w < 420 ? 9.6 : (w < 650 ? 8.6 : 7.5))
+    camera.position.set(0, 0, getTargetZ(initWidth))
 
     let renderer
     try {
@@ -391,7 +394,9 @@ export default function Hero3DScene({ theme = 'light' }) {
       if (!container || !renderer) return
       const width = container.clientWidth
       const height = container.clientHeight
+      if (height === 0) return
       camera.aspect = width / height
+      camera.position.z = getTargetZ(width)
       camera.updateProjectionMatrix()
       renderer.setSize(width, height)
     }

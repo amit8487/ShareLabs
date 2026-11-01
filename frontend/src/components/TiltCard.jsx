@@ -28,6 +28,7 @@ export default function TiltCard({
 
   const handleMouseMove = (event) => {
     if (reducedMotion || !cardRef.current) return
+    if (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches) return
     const rect = cardRef.current.getBoundingClientRect()
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
